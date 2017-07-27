@@ -1,0 +1,158 @@
+/* walls2.c */
+
+#include <string.h>
+#include <walls.h>
+#include <screen.h>
+
+#define WALLLOOP 61
+#define UNITS 12
+#define UNITLINES  7
+
+static int count = 0;
+
+static char walldata[UNITS*UNITLINES][WIDTH+1] ={
+  "OOO                                  OOO",   /* 0 */
+  "OOO     O   O               OOO      OOO",
+  "OOO    O O O O               O       OOO",
+  "OOO   O  O O  O              O       OOO",
+  "OOO  O    O    O            OO       OOO",
+  "OOO O     O     O            O       OOO",
+  "OOO                                  OOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOO                                  OOO",   /* 1 */
+  "OOO     O   O              OOOOO     OOO",
+  "OOO    O O O O               O       OOO",
+  "OOO   O  O O  O               O      OOO",
+  "OOO  O    O    O          O    O     OOO",
+  "OOO O     O     O          OOOO      OOO",
+  "OOO                                  OOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOO                                  OOO",   /* 2 */
+  "OOO     O   O              OOOO      OOO",
+  "OOO    O O O O            O    O     OOO",
+  "OOO   O  O O  O              OO      OOO",
+  "OOO  O    O    O          O    O     OOO",
+  "OOO O     O     O          OOOO      OOO",
+  "OOO                                  OOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOO                                  OOO",   /* 3 */
+  "OOO  OOOO   OOO        O     O OOOOO OOO",
+  "OOO O   O  O   O       O OOO O O     OOO",
+  "OOO O  OOO O   O        O   O  O     OOO",
+  "OOO O      O   O         O O   O     OOO",
+  "OOO  OOO    OOO           O    O     OOO",
+  "OOO                                  OOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOO                             OOOOOO",   /* 4 */
+  "OOOOOO       O          O        OOOOOOO",
+  "OOOOOO      OOO        OOO       OOOOOOO",
+  "OOOOOO     OOOO       OOOOO      OOOOOOO",
+  "OOOOOO      OOO       OOOO      OOOOOOOO",
+  "OOOOOOO      OO        O       OOOOOOOOO",
+  "OOOOOOOO                      OOOOOOOOOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOOOOOOO                  OOOOOOOOOOOO",   /* 5 */
+  "OOOOOOOOO                  OOOOOOOOOOOOO",
+  "OOOOOOO                   OOOOOOOOOOOOOO",
+  "OOOO                     OOOOOOOOOOOOOOO",
+  "OOO                     OOOOOOOOOOOOOOOO",
+  "OOO                   OOOOOOOOOOOOOOOOOO",
+  "OO                   OOOOOOOOOOOOOOOOOOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OO                    OOOOOOOOOOOOOOOOOO",   /* 6 */
+  "OOO                   OOOOOOOOOOOOOOOOOO",
+  "OOO                    OOOOOOOOOOOOOOOOO",
+  "OOOO                     OOOOOOOOOOOOOOO",
+  "OOOOOOO                    OOOOOOOOOOOOO",
+  "OOOOOOOOO                    OOOOOOOOOOO",
+  "OOOOOOOOOOO                   OOOOOOOOOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOOOOOOOOOOO                 OOOOOOOOO",   /* 7 */
+  "OOOOOOOOOOOOOOOO                OOOOOOOO",
+  "OOOOOOOOOOOOOOOOOO               OOOOOOO",
+  "OOOOOOOOOOOOOOOOOOOO              OOOOOO",
+  "OOOOOOOOOOOOOOOOOOOOO               OOOO",
+  "OOOOOOOOOOOOOOOOOOOOOO               OOO",
+  "OOOOOOOOOOOOOOOOOOOOOOO               OO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOOOOOOOOOOOOOOOOOO                 OO",   /* 8 */
+  "OOOOOOOOOOOOOOOOOOOO                 OOO",
+  "OOOOOOOOOOOOOOOOOOO                 OOOO",
+  "OOOOOOOOOOOOOOOOO                  OOOOO",
+  "OOOOOOOOOOOOOO                    OOOOOO",
+  "OOOOOOOOOOOO                    OOOOOOOO",
+  "OOOOOOOOO                      OOOOOOOOO",
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOOOO            OOOOO        OOOOOOOO",   /* 9 */
+  "OOOOOO          OOOOOOOOOO        OOOOOO",
+  "OOOOOO         OOOOOOOOOOOO        OOOOO",
+  "OOOOOO         OOOOOOOOOOOO          OOO",   
+  "OOOOOOO        OOOOOOOOOOO          OOOO",   
+  "OOOOOOO         OOOOOOOOO         OOOOOO",   
+  "OOOOOOOO          OOOOO          OOOOOOO",   
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOOO                            OOOOOO",   /* 10 */
+  "OOOOO       OO            OO       OOOOO",   
+  "OOOO       OOO     OO     OOO       OOOO",   
+  "OOOO        O     OOOO     O        OOOO",   
+  "OOOOO              OO              OOOOO",   
+  "OOOOO                              OOOOO",   
+  "OOOOO                              OOOOO",   
+  /*   ,    |    ,    |    ,    |    ,    */
+  "OOOOO                              OOOOO",   /* 11 */
+  "OOOOO                              OOOOO",   
+  "OOOOO      O                O      OOOOO",   
+  "OOOOO      O    OO    OO    O      OOOOO",   
+  "OOOOO       O   O      O   O       OOOOO",   
+  "OOOOOO                            OOOOOO",   
+  "OOOOOOO                          OOOOOOO",   
+  /*   ,    |    ,    |    ,    |    ,    */
+};
+
+static char collisioncheckdata[UNITS*UNITLINES][WIDTH];
+
+static int wallorder[WALLLOOP] ={
+  11, 0,10,11,10,   9,10,11, 9,11,  10, 9,10,11, 9,   9,11,10,11, 9,
+  1, 5, 6,10, 5,   11, 7, 8, 5, 6,   4, 5, 6,11, 7,   8, 5, 6,10,11,
+  2, 4,11,10, 9,    5, 6, 7, 8,10,  11, 9, 4, 5, 6,   7, 8, 9, 9, 9,
+  3
+};
+
+
+void initwalls(void){
+  int i,j;
+  for(i=0;i<UNITS*UNITLINES;i++){
+    for(j=0;j<WIDTH;j++){
+      if(walldata[i][j] ==' '){ 
+        collisioncheckdata[i][j] = NONOBJ;//non object
+      }else{
+        collisioncheckdata[i][j] = WALL;//wall
+      }
+    }
+  }
+}
+
+void scrollwall(void){
+  count++;
+}
+
+void putwalls(int lines){
+  int unit,lline;
+  int i,j;
+  for (i=lines;i>0;i--){
+    unit = ((count+i) / UNITLINES) % WALLLOOP; 
+    lline = ((count+i) % UNITLINES); 
+    for(j=0;j<WIDTH;j++){
+      putdata(j,lines-i,walldata[wallorder[unit]*UNITLINES+lline][j],
+              collisioncheckdata[wallorder[unit]*UNITLINES+lline][j]);
+    }
+  }
+  for(j=0;j<WIDTH;j++){
+    putdata(j,0,'+',BORDER);
+    putdata(j,lines-1,'+',BORDER);
+  }            
+  for(j=0;j<lines;j++){
+    putdata(0,j,'+',BORDER);
+    putdata(WIDTH-1,j,'+',BORDER);
+  }            
+}
